@@ -1,0 +1,38 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: ruby-build-config
+  namespace: image-review
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "ruby-app:latest"
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: "ruby:3.0-ubi7"
+  postCommit: {}
+  source:
+    type: Git
+    git:
+      uri: "https://github.com/sclorg/ruby-ex.git"
+  triggers:
+    - type: Generic
+      generic:
+        secretReference:
+          name: ruby-sample-ext-generic-webhook-secret
+    - type: GitHub
+      github:
+        secretReference:
+          name: ruby-sample-ext-github-webhook-secret
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+  runPolicy: Serial
