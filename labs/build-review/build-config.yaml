@@ -2,7 +2,6 @@ kind: BuildConfig
 apiVersion: build.openshift.io/v1
 metadata:
   name: ruby-build-config
-  namespace: image-review
 spec:
   output:
     to:
