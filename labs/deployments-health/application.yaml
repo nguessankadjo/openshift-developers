@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: expense
   name: expense
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       deployment: expense
