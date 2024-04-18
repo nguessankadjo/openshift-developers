@@ -5,5 +5,5 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: nfs-storage
+  storageClassName: managed-csi
   volumeMode: Filesystem
