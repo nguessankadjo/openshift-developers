@@ -18,7 +18,7 @@ spec:
       default: "https://github.com/beopencloud/openshift-developers"
     - name: GIT_REVISION
       type: string
-      default: "master"
+      default: "main"
     - name: APP_PATH
       type: string
       default: "app/compreview-cicd/words"
