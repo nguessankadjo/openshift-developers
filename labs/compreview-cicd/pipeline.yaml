@@ -15,13 +15,13 @@ spec:
       default: "image-registry.openshift-image-registry.svc:5000"
     - name: GIT_REPO
       type: string
-      default: "https://git.ocp4.example.com/developer/DO288-apps"
+      default: "https://github.com/beopencloud/openshift-developers"
     - name: GIT_REVISION
       type: string
       default: "master"
     - name: APP_PATH
       type: string
-      default: "apps/compreview-cicd/words"
+      default: "app/compreview-cicd/words"
   tasks:
     - name: fetch-repository
       # TODO
