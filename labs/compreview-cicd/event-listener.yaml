@@ -1,0 +1,8 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: words-cicd-template
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - triggerRef: words-cicd-trigger

@@ -1,0 +1,90 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: words-cicd-template
+spec:
+  params:
+    - name: git-url
+      type: string
+    - name: git-revision
+      type: string
+    - default: app/compreview-cicd/words
+      name: APP_PATH
+      type: string
+    - name: image
+      type: string
+  tasks:
+    - name: fetch-repository
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.git-revision)
+        - name: deleteExisting
+          value: 'true'
+        - name: sslVerify
+          value: 'false'
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared
+    - name: npm-install
+      params:
+        - name: CONTEXT
+          value: $(params.APP_PATH)
+        - name: ARGS
+          value: install --no-package-lock
+      runAfter:
+        - fetch-repository
+      taskRef:
+        kind: Task
+        name: npm
+      workspaces:
+        - name: source
+          workspace: shared
+    - name: npm-test
+      params:
+        - name: CONTEXT
+          value: $(params.APP_PATH)
+        - name: ARGS
+          value: test
+      runAfter:
+        - npm-install
+      taskRef:
+        kind: Task
+        name: npm
+      workspaces:
+        - name: source
+          workspace: shared
+    - name: build-push-image
+      params:
+        - name: IMAGE
+          value: $(params.image)
+        - name: DOCKERFILE
+          value: ./Containerfile
+        - name: CONTEXT
+          value: $(params.APP_PATH)
+      runAfter:
+        - npm-test
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared
+    - name: oc-deploy
+      params:
+        - name: SCRIPT
+          value: oc process -f $(params.APP_PATH)/kubefiles/app.yaml -p IMAGE_NAME=$(params.image) | oc apply -f -
+      runAfter:
+        - build-push-image
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      workspaces:
+        - name: manifest-dir
+          workspace: shared
+  workspaces:
+    - name: shared
