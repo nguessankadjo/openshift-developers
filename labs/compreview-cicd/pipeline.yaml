@@ -40,9 +40,6 @@ spec:
     - name: npm-test
     # TODO
 
-    - name: npm-lint
-    # TODO
-
     - name: build-push-image
     # TODO
 
